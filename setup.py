@@ -4,7 +4,7 @@ from typing import List;
 HYPEN_E_DOT='-e .'
 def get_requirements(filename:str)->List[str]:
     """
-        This function will retrun all the packages written in requirement file
+        This function will return all the packages written in requirement file
     """
     try:
         requirement_arr=[];

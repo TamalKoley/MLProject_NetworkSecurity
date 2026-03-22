@@ -1,6 +1,7 @@
 import sys;
 
 class CustomException(Exception):
+    #### This class is responsible for creating custom exception with error details and place of occurence
     def __init__(self, error_message,error_details:sys):
         _,_,tb=error_details.exc_info();
         self.__lineno=tb.tb_lineno;

@@ -5,3 +5,6 @@ Network_Security_Project.egg-info
 logs
 networksecurity/exception/__pycache__/
 networksecurity/logger/__pycache__/
+.vscode/
+networksecurity/__pycache__/
+networksecurity/utils/__pycache__/

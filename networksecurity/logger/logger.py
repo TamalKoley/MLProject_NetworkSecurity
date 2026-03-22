@@ -2,6 +2,8 @@ import os;
 import logging;
 from datetime import datetime;
 
+
+##### This code is responsible for creating log directories if not exist and log file for each execution with overridden basic config
 try:
     LOG_PATH=os.path.join(os.getcwd(),"logs",datetime.now().strftime('%Y%m%d'))
     os.makedirs(LOG_PATH,exist_ok=True)
