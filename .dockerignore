@@ -8,3 +8,7 @@ networksecurity/logger/__pycache__/
 .vscode/
 networksecurity/__pycache__/
 networksecurity/utils/__pycache__/
+networksecurity/Database/__pycache__/
+networksecurity/components/__pycache__/
+networksecurity/constants/__pycache__/
+Artifacts/

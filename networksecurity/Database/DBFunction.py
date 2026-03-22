@@ -4,6 +4,7 @@ from pymongo import MongoClient;
 from dotenv import load_dotenv;
 from networksecurity.exception.exceptionhandler import CustomException;
 from networksecurity.logger.logger import logging;
+from typing import Dict;
 
 load_dotenv()
 
@@ -14,7 +15,7 @@ class DataBaseConnection():
         self.__client:MongoClient=None;
 
     def connect(self):
-         ##### This class is responsible for creating MongoDB connection
+         ##### This function is responsible for creating MongoDB connection
         try:
             if (self.__client):
                 logging.info('already have a active connection')
@@ -30,7 +31,7 @@ class DataBaseConnection():
             raise CustomException(e,sys)
     
     def disconnect(self):
-        ##### This class is responsible for closing  MongoDB connection
+        ##### This function is responsible for closing  MongoDB connection
         try:
             if (self.__client):
                 logging.info('MongoDB connection Closed Successfully')
@@ -40,7 +41,7 @@ class DataBaseConnection():
             raise CustomException(e,sys)
         
     def load(self,DatabaseName,CollectionName,jsonData):
-        ##### This class is responsible for loading data into   MongoDB 
+        ##### This function is responsible for loading data into   MongoDB 
         try:
             if (self.__client):
                 logging.info('Starting data load')
@@ -52,4 +53,17 @@ class DataBaseConnection():
                 logging.info('No active connection , create a active connection at first')
         except Exception as e:
             raise CustomException(e,sys)
+        
+    def export(self,DatabaseName,CollectionName)->Dict:
+        try:
+            if (self.__client):
+                logging.info('Starting data export')
+                db=self.__client[DatabaseName]
+                data=db[CollectionName]
+                logging.info('data export Completed')
+                return data
+                
+        except Exception as e:
+            raise CustomException(e,sys)
+
 
