@@ -2,8 +2,9 @@ import os;
 import sys;
 from dotenv import load_dotenv;
 from networksecurity.exception.exceptionhandler import CustomException;
+from networksecurity.constants.datetimeConfig import datetimestmp;
 from networksecurity.logger.logger import logging;
-from datetime import datetime;
+
 
 class DataIngestionConfig:
     ##### This class is created to define all the constant values required for data ingestion
@@ -12,7 +13,7 @@ class DataIngestionConfig:
         try:
             logging.info('Starting Data ingestion config setup')
             load_dotenv();
-            TIMESTAMP=datetime.now().strftime('%Y%m%d_%H%M%S')
+            TIMESTAMP=datetimestmp;
             ARTIFACT_DIR="Artifacts"
             INGESTION_DIR="Ingested"
             FEATURE_DIR="Feature"

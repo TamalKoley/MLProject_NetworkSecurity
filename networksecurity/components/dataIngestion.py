@@ -28,6 +28,7 @@ class DataIngestion:
             db=DataBaseConnection()
             db.connect()
             jsonData=db.export(self.__config.database_name,self.__config.db_collection_name)
+            db.disconnect();
             df=pd.DataFrame(list(jsonData.find()))
             df.drop(columns=["_id"],axis=1,inplace=True)
             logging.info('Saving feature Data')
