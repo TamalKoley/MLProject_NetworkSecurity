@@ -8,6 +8,7 @@ from networksecurity.utils.npFileUtil import save_numpyArray_data;
 from networksecurity.utils.pickleFileUtil import save_pickle_file;
 from sklearn.pipeline import Pipeline;
 from sklearn.impute import KNNImputer;
+from typing import Tuple;
 
 class DataTransformation:
     ## This class is responsible for train  and test data transformation
@@ -30,7 +31,7 @@ class DataTransformation:
         except Exception as e:
             raise CustomException(e,sys)
         
-    def initiate_dataTransformation(self,train_filepath:str,test_filepath:str):
+    def initiate_dataTransformation(self,train_filepath:str,test_filepath:str)->Tuple[str,str]:
         ##### This method is responsible for peforming data transformation
         try:
             logging.info("starting data transformation")
@@ -60,5 +61,9 @@ class DataTransformation:
             save_numpyArray_data(filepath=self.__config.transformed_test_filepath,data=test_data)
             save_pickle_file(filepath=self.__config.trasformer_filepath,data=preprocessor)
             logging.info("Transformed test and train data and transformer model saved")
+            return (
+                self.__config.transformed_train_filepath,
+                self.__config.transformed_test_filepath
+            )
         except Exception as e:
             raise CustomException(e,sys)

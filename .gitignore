@@ -12,3 +12,5 @@ networksecurity/components/__pycache__/
 networksecurity/constants/__pycache__/
 Artifacts/
 *__pycache__*
+mlruns
+mlflow.db

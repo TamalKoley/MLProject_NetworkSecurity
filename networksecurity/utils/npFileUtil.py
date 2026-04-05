@@ -12,3 +12,12 @@ def save_numpyArray_data(filepath:str,data:np.ndarray):
         logging.info("Numpy array data saved")
     except Exception as e:
         raise CustomException(e,sys)
+
+def load_numpyArray_data(filepath:str)->np.ndarray:
+    try:
+        logging.info("Reading Numpy Array data")
+        npData=np.load(filepath)
+        logging.info("Numpy Array Data read completed")
+        return npData
+    except Exception as e:
+        raise CustomException(e,sys)
