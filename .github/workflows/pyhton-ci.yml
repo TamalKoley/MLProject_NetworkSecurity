@@ -23,7 +23,7 @@ jobs:
                 if [ -f requirements.txt ] ; then pip install -r requirements.txt; fi
         - name: Start App and Smoke Test
           run: |
-                python app.py &
+                python app/app.py &
                 sleep 20
                 curl --fail  http://localhost:10222 || exit 1
                 echo "Application is running successfully!"
