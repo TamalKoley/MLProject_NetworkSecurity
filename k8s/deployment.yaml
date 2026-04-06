@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netsec-app
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      app: netsec-app
+  template:
+    metadata:
+      labels:
+        app: netsec-app
+    spec:
+      containers: 
+        - name: netsec-app
+          image: netsec-app:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 10222
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: netsec-app
+spec:
+  type: NodePort
+  selector: 
+    app: netsec-app
+  ports:
+    - protocol: TCP
+      port: 10222
+      targetPort: 10222
+      nodePort: 30002

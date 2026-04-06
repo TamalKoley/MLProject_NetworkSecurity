@@ -1,0 +1,14 @@
+apiVersion: skaffold/v4beta13
+kind: Config
+metadata:
+  name: networksecurity-application
+build:
+  artifacts:
+    - image: netsec-app
+      context: .
+      docker:
+        dockerfile: Dockerfile
+    
+manifests:
+  rawYaml:
+    - k8s/*.yaml

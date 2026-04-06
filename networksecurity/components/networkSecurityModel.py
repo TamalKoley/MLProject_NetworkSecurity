@@ -17,7 +17,7 @@ class NetworkSecurityModel:
         #### this function is responsible for transforming input and making prediction
         try:
             logging.info("transforimg input and making predictions")
-            x_transformed=self.__preprocessor(x)
+            x_transformed=self.__preprocessor.transform(x)
             y_pred=self.__model.predict(x_transformed)
             logging.info("Prediction completed")
             return y_pred;

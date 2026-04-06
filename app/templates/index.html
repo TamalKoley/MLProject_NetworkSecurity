@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing URL Predictor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+
+        .container {
+            max-width: 1100px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 0.95em;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 1200px) {
+            .form-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .form-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 4px;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.85em;
+        }
+
+        .form-group select {
+            padding: 8px 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: white;
+        }
+
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 8px rgba(102, 126, 234, 0.2);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 10px 32px;
+            font-size: 0.95em;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .reset-btn {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .reset-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .result-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            text-align: center;
+            display: none;
+        }
+
+        .result-container.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-title {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .result-badge {
+            display: inline-block;
+            padding: 15px 40px;
+            font-size: 1.3em;
+            font-weight: bold;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .phishing {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .legitimate {
+            background: #51cf66;
+            color: white;
+        }
+
+        .confidence {
+            margin-top: 20px;
+            color: #666;
+            font-size: 1.05em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ Phishing URL Detector</h1>
+            <p>Analyze URLs for phishing indicators</p>
+        </div>
+
+        <div class="form-container">
+            <form method="POST" action="{{ url_for('predict') }}">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="having_IP_Address">Having IP Address</label>
+                        <select id="having_IP_Address" name="having_IP_Address" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="URL_Length">URL Length</label>
+                        <select id="URL_Length" name="URL_Length" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Shortining_Service">Shortening Service</label>
+                        <select id="Shortining_Service" name="Shortining_Service" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="having_At_Symbol">Having @ Symbol</label>
+                        <select id="having_At_Symbol" name="having_At_Symbol" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="double_slash_redirecting">Double Slash Redirecting</label>
+                        <select id="double_slash_redirecting" name="double_slash_redirecting" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Prefix_Suffix">Prefix Suffix</label>
+                        <select id="Prefix_Suffix" name="Prefix_Suffix" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="having_Sub_Domain">Having Sub Domain</label>
+                        <select id="having_Sub_Domain" name="having_Sub_Domain" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="SSLfinal_State">SSL Final State</label>
+                        <select id="SSLfinal_State" name="SSLfinal_State" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Domain_registeration_length">Domain Registration Length</label>
+                        <select id="Domain_registeration_length" name="Domain_registeration_length" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Favicon">Favicon</label>
+                        <select id="Favicon" name="Favicon" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="port">Port</label>
+                        <select id="port" name="port" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="HTTPS_token">HTTPS Token</label>
+                        <select id="HTTPS_token" name="HTTPS_token" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Request_URL">Request URL</label>
+                        <select id="Request_URL" name="Request_URL" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="URL_of_Anchor">URL of Anchor</label>
+                        <select id="URL_of_Anchor" name="URL_of_Anchor" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Links_in_tags">Links in Tags</label>
+                        <select id="Links_in_tags" name="Links_in_tags" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="SFH">SFH</label>
+                        <select id="SFH" name="SFH" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Submitting_to_email">Submitting to Email</label>
+                        <select id="Submitting_to_email" name="Submitting_to_email" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Abnormal_URL">Abnormal URL</label>
+                        <select id="Abnormal_URL" name="Abnormal_URL" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Redirect">Redirect</label>
+                        <select id="Redirect" name="Redirect" required>
+                            <option value="">Select...</option>
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="on_mouseover">On Mouseover</label>
+                        <select id="on_mouseover" name="on_mouseover" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="RightClick">Right Click</label>
+                        <select id="RightClick" name="RightClick" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="popUpWidnow">Pop-Up Window</label>
+                        <select id="popUpWidnow" name="popUpWidnow" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Iframe">Iframe</label>
+                        <select id="Iframe" name="Iframe" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="age_of_domain">Age of Domain</label>
+                        <select id="age_of_domain" name="age_of_domain" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="DNSRecord">DNS Record</label>
+                        <select id="DNSRecord" name="DNSRecord" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="web_traffic">Web Traffic</label>
+                        <select id="web_traffic" name="web_traffic" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Page_Rank">Page Rank</label>
+                        <select id="Page_Rank" name="Page_Rank" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Google_Index">Google Index</label>
+                        <select id="Google_Index" name="Google_Index" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Links_pointing_to_page">Links Pointing to Page</label>
+                        <select id="Links_pointing_to_page" name="Links_pointing_to_page" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Statistical_report">Statistical Report</label>
+                        <select id="Statistical_report" name="Statistical_report" required>
+                            <option value="">Select...</option>
+                            <option value="-1">-1</option>
+                            <option value="1">1</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="submit-btn">🔍 Analyze URL</button>
+                    <button type="reset" class="reset-btn">Clear Form</button>
+                </div>
+            </form>
+        </div>
+
+        {% if prediction %}
+        <div class="result-container show">
+            <div class="result-title">Analysis Result</div>
+            <div class="result-badge {% if prediction == 'Phishing' %}phishing{% else %}legitimate{% endif %}">
+                {% if prediction == 'Phishing' %}
+                    ⚠️ PHISHING DETECTED
+                {% else %}
+                    ✅ LEGITIMATE URL
+                {% endif %}
+            </div>
+            <div class="confidence">
+                <strong>Prediction:</strong> {{ prediction }}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -16,6 +16,9 @@ from sklearn.metrics import r2_score,f1_score,recall_score,precision_score;
 import mlflow;
 from typing import Dict;
 import warnings;
+# import dagshub
+
+
 
 
 class ModelTraining:
@@ -32,6 +35,7 @@ class ModelTraining:
     def initiate_model_training(self,train_datapath:str,test_datapath:str):
         ##### This method is responsible for performing model training
         try:
+            # dagshub.init(repo_owner='TamalKoley', repo_name='MLProject_NetworkSecurity', mlflow=True)
             warnings.filterwarnings('ignore');
             logging.info("Starting Model Training")
             train_df=load_numpyArray_data(filepath=train_datapath)
@@ -125,8 +129,11 @@ class ModelTraining:
             logging.info("Saving preprocessor and model")
             preprocessor=load_pickle_file(self.__dataTransformationConfig.trasformer_filepath)
             netsec_model=NetworkSecurityModel(model=model,preprocessor=preprocessor)
+            
             os.makedirs(self.__config.transformed_object_dir,exist_ok=True)
             save_pickle_file(filepath=self.__config.transformed_model_filepath,data=netsec_model)
+            os.makedirs(self.__config.final_model_dir,exist_ok=True)
+            save_pickle_file(filepath=self.__config.final_model_filepath,data=netsec_model)
             logging.info("preprocessor and model saved")
             
         except Exception as e:

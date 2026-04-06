@@ -9,6 +9,7 @@ class ModelTrainerConfig:
         ### Constructor
         try:
             logging.info('Starting Model Trainer Config Setting')
+            FINAL_DIR="Final_Models"
             ARTIFACT_DIR="Artifacts"
             TIMESTAMP=datetimestmp
             MODEL_TRAINING_DIR="Model_Training"
@@ -21,6 +22,8 @@ class ModelTrainerConfig:
             self.classification_report_filepath=os.path.join(ARTIFACT_DIR,TIMESTAMP,MODEL_TRAINING_DIR,CLASSIFICATION_REPORT_FILENAME)
             self.transformed_object_dir=os.path.join(ARTIFACT_DIR,TIMESTAMP,MODEL_TRAINING_DIR,TRANSFORMED_OBJECT_DIR)
             self.transformed_model_filepath=os.path.join(ARTIFACT_DIR,TIMESTAMP,MODEL_TRAINING_DIR,TRANSFORMED_OBJECT_DIR,MODEL_FILE_NAME)
+            self.final_model_filepath=os.path.join(FINAL_DIR,MODEL_FILE_NAME)
+            self.final_model_dir=os.path.join(FINAL_DIR)
             logging.info('Model Trainer Config Setting Completed')
         except Exception as e:
             raise CustomException(e,sys)

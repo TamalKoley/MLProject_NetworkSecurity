@@ -5,4 +5,6 @@ pymongo
 scikit-learn
 pyaml
 mlflow
+dagshub
+flask
 #-e .
