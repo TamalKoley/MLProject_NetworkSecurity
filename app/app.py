@@ -63,4 +63,3 @@ def predict():
 if __name__=='__main__':
     app.run(host='0.0.0.0',port=10222)
     print("app is staring on port 10222")
-    
