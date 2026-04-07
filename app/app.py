@@ -11,6 +11,7 @@ model=pickle.load(open('Final_Models/trained_model.pkl','rb'));
 
 
 
+
 @app.route("/",methods=['GET','POST'])
 def predict():
     try:
