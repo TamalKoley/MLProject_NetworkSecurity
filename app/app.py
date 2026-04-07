@@ -5,8 +5,12 @@ import pickle;
 
 model=pickle.load(open('Final_Models/trained_model.pkl','rb'));
 
+
 #app=Flask(__name__);
 ##
+
+
+
 @app.route("/",methods=['GET','POST'])
 def predict():
     try:
